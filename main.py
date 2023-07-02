@@ -1,15 +1,18 @@
-from api import BinanceAPI
-from checking import CryptoChecker
+from binance_api import BinanceAPI
+from crypto_currency import CryptoCurrency
+from common import write_file
 
-# Создаем экземпляры классов
+CRYPTO_CURRENCIES = ['BTC', 'ETH', 'XRP', 'LTC', 'EOS']
+
 binance_api = BinanceAPI()
-cryptocurrencies = ['BTC', 'ETH', 'XRP', 'LTC', 'EOS']
-crypto_checker = CryptoChecker(binance_api, cryptocurrencies)
+crypto_checker = CryptoCurrency(binance_api)
+crypto_prices = crypto_checker.get_crypto_prices(CRYPTO_CURRENCIES)
 
-# Получаем цены криптовалют
-crypto_prices = crypto_checker.get_crypto_prices()
+# Записываем крипту и соответствующую последнюю цену
+write_file(crypto_prices, 'crypto_prices.txt')
 
-# Записываем цены в файл
-crypto_checker.write_prices_to_file(crypto_prices, 'crypto_prices.txt')
+# Отображаем список валют, которые имеют стоимость ниже BTC
+print("Список валют, которые имеют стоимость ниже BTC:", crypto_checker.compare_with_btc(crypto_prices), sep='\n')
 
-print(crypto_prices)
+# Отображаем список всех валют и их стоимость
+print("Список всех валют и их стоимость", crypto_prices, sep='\n')
